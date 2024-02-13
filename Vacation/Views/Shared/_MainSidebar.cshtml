@@ -1,0 +1,64 @@
+﻿<!-- sidebar-menu -->
+<nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column " style="font-size:14px; font-weight:400" data-widget="treeview" role="menu" data-accordion="false">
+        @*
+        @if (User.IsInRole("SuperAdmin"))
+        { *@
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-users"></i>
+                <p>
+                    Administration
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a asp-controller="User" asp-action="Index" class="nav-link">
+                        <p>
+                            Users
+                            <i class="fa fa-users right text-blue" aria-hidden="true"></i>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Role" asp-action="Index" class="nav-link">
+                        <p>
+                            Roles
+                            <i class="fa fa-lock right text-red" aria-hidden="true"></i>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-controller="Department" asp-action="Index" class="nav-link">
+                        <p>
+                            Departments
+                            <i class="fa fa-address-book right" aria-hidden="true"></i>
+                        </p>
+                    </a>
+                </li>
+
+
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <a asp-controller="Vacation" asp-action="Index" class="nav-link">
+                    <p>
+                        Vacations
+                        <i class="fa fa-handshake right" aria-hidden="true"></i>
+                    </p>
+                </a>
+            </a>
+            
+
+        </li>
+        @*         }
+        *@
+
+
+
+       
+    </ul>
+</nav>
+<!-- /.sidebar-menu -->

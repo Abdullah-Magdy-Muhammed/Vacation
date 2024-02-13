@@ -1,0 +1,55 @@
+﻿@model Vacations
+
+@{
+    ViewData["Title"] = "Vacation Details";
+}
+
+<div class="col-md-12">
+    <!-- Form Element sizes -->
+    <div class="card card-success">
+        <div class="card-header">
+            <h3 class="card-title">Vacation Details</h3>
+        </div>
+        <div class="card-body">
+            <label class="control-label col-md-3">Submission Date</label>
+
+            <input class="form-control" type="text" readonly value="@Model.SubmissionDate.ToString("dd MMMM yyyy")">
+            <br>
+            <label class="control-label col-md-3">Employee Name</label>
+
+            <input class="form-control" type="text" readonly value="@Model.EmployeeName"> 
+            <br>
+            <label class="control-label col-md-3">Title</label>
+            <input class="form-control" type="text" readonly value="@Model.Title">
+            <br>
+            <label class="control-label col-md-3">Department</label>
+
+            <input class="form-control" type="text" readonly value="@Model.Department.Name">
+
+            <br>
+            <label class="control-label col-md-3">From</label>
+
+            <input class="form-control" type="text" readonly value="@Model.VacationDateFrom.ToString("dd MMMM yyyy")">
+            <br>
+            <label class="control-label col-md-3">To</label>
+
+            <input class="form-control" type="text" readonly value="@Model.VacationDateTo.ToString("dd MMMM yyyy")">
+            <br>
+            <label class="control-label col-md-3">Returning</label>
+
+            <input class="form-control" type="text" readonly value="@Model.Returning.ToString("dd MMMM yyyy")">
+            <br>
+            <label class="control-label col-md-3">Total Requested Date</label>
+
+            <input class="form-control" type="text" readonly value="@Model.TotalNumberOfDaysRequested"> 
+            <br />
+            <label class="control-label col-md-3">Notes</label>
+            <input class="form-control" type="text" readonly value="@Model.Notes">
+
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+
+   
+</div>

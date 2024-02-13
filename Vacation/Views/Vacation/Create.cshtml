@@ -1,0 +1,219 @@
+﻿@model Vacations
+@{
+    
+    ViewData["Title"] = "New Vacation";
+}
+<form asp-action="Create" method="post" id="CreateVacationForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-info shadow ">
+                <div class="card-header">
+                    <h6 class="card-title">Vacation Basic Data </h6>
+                </div>
+                <div class="card-body ">
+                    <div class="form-group row">
+                        <label class="control-label col-md-3">Submission Date</label>
+                        <div class="col-md-9">
+                            <div class="input-group date" id="submissiondatetime" data-target-input="nearest">
+                                <input type="text" asp-for="SubmissionDate" value="@(DateTime.Now.ToString("dd MMMM yyyy"))" class="form-control" readonly>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="EmployeeName" class="control-label col-md-3"></label>
+                        <div class="col-md-9">
+                            <input asp-for="EmployeeName" class="form-control" placeholder="Employee Name" />
+                            <span asp-validation-for="EmployeeName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="Title" class="control-label col-md-3"></label>
+                        <div class="col-md-9">
+                            <input asp-for="Title" class="form-control" placeholder="Title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="DepartmentId" class="control-label col-md-3"></label>
+                        <div class="col-md-9">
+                            <select class="select2" asp-for="DepartmentId" asp-items="@ViewBag.DepartmentId" data-placeholder="Select a Vendor" style="width: 100%;">
+                                <option selected disabled>--Select Department--</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3" asp-for="VacationDateFrom"></label>
+                        <div class="col-md-9">
+                            <div class="input-group date" id="fromdatetime" data-target-input="nearest">
+                                <input type="text" asp-for="VacationDateFrom" class="form-control datetimepicker" value="@(DateTime.Now)" data-target="#fromdatetime">
+                                <div class="input-group-append" data-target="#fromdatetime" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-md-3" asp-for="VacationDateTo"></label>
+                        <div class="col-md-9">
+                            <div class="input-group date" id="todatetime" data-target-input="nearest">
+                                <input type="text" asp-for="VacationDateTo" class="form-control datetimepicker" value="@(DateTime.Now)" data-target="#todatetime">
+                                <div class="input-group-append" data-target="#todatetime" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="TotalNumberOfDaysRequested" class="control-label col-md-3"></label>
+                        <div class="col-md-9">
+                            <input asp-for="TotalNumberOfDaysRequested" class="form-control" readonly />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label asp-for="Notes" class="control-label col-md-3"></label>
+                        <div class="col-md-9">
+                            <textarea asp-for="Notes" class="form-control" placeholder="General Notes" ></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    <button type="button" onclick="CreateVacation()" class="btn btn-info">Save changes</button>
+                </div>
+            </div>
+      </div>
+
+</form>
+@section Scripts {
+    <script src="~/Dashboard/dist/js/cascading.js"></script>
+
+    <script>
+        
+        
+        function CreateVacation() {
+            var form = $("#CreateVacationForm");
+            var data = new FormData();
+            var valid = true; // Variable to track overall form validity
+            var today = new Date();
+            var fromDateTime = $('#VacationDateFrom').val();
+            var toDateTime = $('#VacationDateTo').val();
+            var deparmentId = $('#DepartmentId').val();
+
+
+            if (deparmentId.trim() === "") {
+                valid = false;
+                swal("Validation error!", "please add department", "warning");
+            }
+            if (fromDateTime.trim() === "" || toDateTime.trim() === "") {
+                valid = false;
+                swal("Validation error!", "please add date", "warning");
+            }
+            else if (parseDate(fromDateTime) < today.setHours(0, 0, 0, 0)) {
+                valid = false;
+                swal("Validation error!", `Please Add a valid date`, "warning");
+            }
+            else if (parseDate(fromDateTime) >= parseDate(toDateTime)) {
+                valid = false;
+                swal("Validation error!", `Please add to date newer than from date`, "warning");
+            }
+             else {
+                data.append('VacationDateFrom', fromDateTime);
+                data.append('VacationDateTo', toDateTime);
+                var totalDays = calculateTotalDays(fromDateTime, toDateTime);
+
+                data.append('TotalNumberOfDaysRequested', totalDays);
+                data.append('DepartmentId', deparmentId);
+
+            }
+
+
+
+           
+
+            // Validation for Description field
+            var submissionDate = $('#SubmissionDate').val();
+            data.append('SubmissionDate', submissionDate);
+
+            var employeeName = $('#EmployeeName').val();
+            data.append('EmployeeName', employeeName);
+
+            // Validation for AssetId field
+            var title = $('#Title').val();
+            data.append('Title', title);
+
+
+            
+
+            var returningDate = calculateReturningDate(toDateTime);
+            data.append('Returning', returningDate);
+
+
+            
+            var notes = $('#Notes').val();
+            data.append('Notes', notes);
+
+
+            if (valid) {
+                $.blockUI({ message: '<img src="/images/Loading.gif"/> ' });
+                $.ajax({
+                    type: "POST",
+                    url: '/Vacation/Create/',
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    success: function (result) {
+                        if (result['status'] == "error") {
+                            swal(result['status'], result['message'], result['status']);
+                            $('#CreateVacationForm').trigger("reset");
+                            $.unblockUI();
+                        } else {
+                            swal("Done!", "Asset Movement has been added successfully", "success");
+                            $('#CreateVacationForm').trigger("reset");
+                            location.reload();
+                            $.unblockUI();
+                        }
+                    },
+                    error: function (xhr, status, p3, p4) {
+                        $.unblockUI();
+                        swal("error!", "Error while adding asset Movement, please contact system admin", "Error");
+                    }
+                });
+            }
+        }
+        function calculateTotalDays(fromDateTime, toDateTime) {
+            var fromDate = parseDate(fromDateTime);
+            var toDate = parseDate(toDateTime);
+            var totalDays = 0;
+
+            // Loop through each day and count only working days (excluding Friday and Saturday)
+            while (fromDate <= toDate) {
+                var dayOfWeek = fromDate.getDay();
+                if (dayOfWeek !== 5 && dayOfWeek !== 6) { // Exclude Friday (5) and Saturday (6)
+                    totalDays++;
+                }
+                fromDate.setDate(fromDate.getDate() + 1); // Move to the next day
+            }
+
+            return totalDays;
+        }
+        function calculateReturningDate(toDate) {
+            var nextDate = new Date(toDate);
+            // Skip Friday (day 5) and Saturday (day 6)
+            while (nextDate.getDay() == 5 || nextDate.getDay() == 6) {
+                nextDate.setDate(nextDate.getDate() + 1);
+            }
+
+            // If the new date is Sunday (day 0), skip it as well
+            if (nextDate.getDay() == 0) {
+                nextDate.setDate(nextDate.getDate() + 1);
+            }
+
+            // Format the date as YYYY-MM-DD
+            var returningDate = nextDate.toISOString().split('T')[0];
+            return returningDate;
+        }
+    </script>
+
+}

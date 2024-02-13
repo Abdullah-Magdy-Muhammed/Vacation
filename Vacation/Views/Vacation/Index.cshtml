@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Vacations>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h6 class="card-title">Vacation</h6>
+        <a class="btn btn-info btn-sm float-right" asp-controller="Vacation" asp-action="Create">Add New Vacation</a>
+    </div>
+    <div class="card-body">
+        <table class="table datatable table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Submission Date
+                    </th>
+                    <th>
+                        Employee 
+                    </th>
+                    <th>
+                        Department
+                    </th>
+                    <th>
+                        From
+                    </th>
+                    <th>
+                        To 
+                    </th>
+                    
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="tr">
+                        <td>
+                            @item.SubmissionDate.ToString("dd MMMM yyyy")
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.EmployeeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Department.Name)
+                        </td>
+                        <td>
+                            @item.VacationDateFrom.ToString("dd MMMM yyyy")
+                        </td>
+                        <td>
+                            @item.VacationDateTo.ToString("dd MMMM yyyy")
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                               
+                                    <a  asp-action="VacationDetails" asp-route-id="@item.Id">Details</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(".deleteRow").on("click", function (e) {
+            e.preventDefault();
+            var btn = $(this);
+            var Container = btn.parents('.tr');
+            swal({
+                title: "Are you sure you want to Delete?",
+                text: "You will not be able to restore the data!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: $(this).attr("href"),
+                        success: function () {
+                            swal("Deleted!", "Your item has been deleted!", "success");
+                            Container.addClass('animate__animated animate__zoomOut');
+                            setTimeout(function () {
+                                Container.remove();
+                            }, 1000);
+                            //toastr.success("Item Removed!");
+                        },
+                        error: function () {
+                            swal("error!", "error while deleteing", "error");
+                            //toastr.error("item not removed");
+                        }
+                    });
+                }
+            });
+        })
+    </script>
+}
